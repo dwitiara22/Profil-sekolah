@@ -25,12 +25,12 @@
 
             <!-- Nama Kaproka -->
             <h3 class="text-sm font-bold text-gray-800 mt-3 max-w-[150px] break-words leading-tight">
-                Nama Kaproka NKPI, S.Pi.
+                
             </h3>
 
             <!-- NIP -->
             <p class="text-xs text-gray-400 mt-1 font-mono">
-                NIP. 19850101XXXXXXXXXX
+                NIP. 
             </p>
             
         </div>

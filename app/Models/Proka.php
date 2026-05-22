@@ -9,6 +9,8 @@ class Proka extends Model
 {
     use HasFactory;
 
+    // protected $table = 'tim_kerjas';
+
     protected $fillable = ['nama_proka'];
 
     // Relasi: Satu Proka bisa memiliki beberapa riwayat Kepala Proka

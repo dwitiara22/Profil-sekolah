@@ -5,9 +5,6 @@ namespace App\Http\Controllers\proka;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Proka;
-use App\Models\KepalaProka;
 
 class KepalaProkaController extends Controller
 {
@@ -17,13 +14,14 @@ class KepalaProkaController extends Controller
         $slugUpper = strtoupper($slug);
 
         $prokaDb = DB::table('prokas')->where('nama_proka', $slugUpper)->first();
+
         if (!$prokaDb) {
             abort(404);
         }
 
         $kepalaProka = DB::table('kepala_prokas')->where('proka_id', $prokaDb->id)->first();
 
-        // PERBAIKAN GURU DI INDEX: Membaca nama mata pelajaran dari kolom 'foto'
+        // 🟢 PERBAIKAN GURU DI INDEX: Membaca nama mata pelajaran dari kolom 'foto'
         $gurus = DB::table('tim_kerjas')
                     ->where('jabatan_di_tim', $slugUpper) 
                     ->where('kategori', 'pengajaran')
@@ -56,7 +54,6 @@ class KepalaProkaController extends Controller
         ];
 
         $data = [
-            'id'        => $prokaDb->id,
             'judul'     => $prokaDb->nama_proka,
             'deskripsi' => 'Program keahlian ' . $prokaDb->nama_proka . ' berfokus pada pengembangan kompetensi siswa/i dalam bidang teknologi kelautan dan perikanan.',
             'badge'     => $badges[$slugLower] ?? [],
@@ -222,104 +219,4 @@ class KepalaProkaController extends Controller
         // PERBAIKAN REDIRECT: Alihkan rute murni ke nama proka huruf kecil (contoh: /proka/nkpi)
         return redirect()->route('proka', strtolower($kodeProka))->with('success', 'Siswa/i berhasil dihapus!');
     }
-
-    // upload foto
-    public function uploadFotoKaproka(Request $request, $id)
-    {
-        $request->validate([
-            'foto' => 'required|image|mimes:jpg,jpeg,png|max:5120'
-        ]);
-
-        $kepalaProka = KepalaProka::where('proka_id', $id)->first();
-
-        if (!$kepalaProka) {
-
-            $kepalaProka = new KepalaProka();
-            $kepalaProka->proka_id = $id;
-        }
-
-        // hapus foto lama
-        if ($kepalaProka->foto &&
-            file_exists(public_path('images/' . $kepalaProka->foto))) {
-
-            unlink(public_path('images/' . $kepalaProka->foto));
-        }
-
-        $file = $request->file('foto');
-
-        $namaFile = time() . '.' . $file->getClientOriginalExtension();
-
-        $file->move(public_path('images'), $namaFile);
-
-        $kepalaProka->foto = $namaFile;
-
-        $kepalaProka->save();
-
-        return back()->with('success', 'Foto berhasil diupload');
-    }
-
-    // update data
-    public function updateDataKaproka(Request $request, $id)
-{
-    $request->validate([
-        'nama_kepala' => 'required',
-        'nip' => 'required|numeric',
-        'foto' => 'nullable|image|mimes:jpg,jpeg,png|max:5120'
-    ]);
-
-    $kepalaProka = KepalaProka::where('proka_id', $id)->first();
-
-    if (!$kepalaProka) {
-
-        $kepalaProka = new KepalaProka();
-        $kepalaProka->proka_id = $id;
-    }
-
-    // upload foto baru
-    if ($request->hasFile('foto')) {
-
-        // hapus foto lama
-        if ($kepalaProka->foto &&
-            file_exists(public_path('images/' . $kepalaProka->foto))) {
-
-            unlink(public_path('images/' . $kepalaProka->foto));
-        }
-
-        $file = $request->file('foto');
-
-        $namaFile = time() . '.' . $file->getClientOriginalExtension();
-
-        $file->move(public_path('images'), $namaFile);
-
-        $kepalaProka->foto = $namaFile;
-    }
-
-    $kepalaProka->nama_kepala = $request->nama_kepala;
-    $kepalaProka->nip = $request->nip;
-
-    $kepalaProka->save();
-
-    return back()->with('success', 'Data berhasil diperbarui');
-}
-
-    // hapus
-    public function deleteKaproka($id)
-    {
-        $kepalaProka = KepalaProka::where('proka_id', $id)->first();
-
-        if ($kepalaProka) {
-
-            // hapus foto
-            if ($kepalaProka->foto &&
-                file_exists(public_path('images/' . $kepalaProka->foto))) {
-
-                unlink(public_path('images/' . $kepalaProka->foto));
-            }
-
-            $kepalaProka->delete();
-        }
-
-        return back()->with('success', 'Data berhasil dihapus');
-    }
-
 }

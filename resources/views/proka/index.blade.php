@@ -22,14 +22,13 @@
 
                 <div class="w-32 h-48 bg-gray-200 rounded-2xl overflow-hidden shadow-lg border-2 border-indigo-600 flex items-center justify-center">
 
-                    <img src="/images/{{ $data['foto_kepala'] }}"
-                         alt="Foto Kaproka"
-                         class="w-full h-full object-cover">
-
+                    <img src="{{ asset('images/' . $data['foto_kepala']) }}"
+                        alt="Foto Kaproka"
+                        class="w-full h-full object-cover">
                 </div>
 
                 <h3 class="text-sm font-bold text-gray-800 mt-3 max-w-[150px] leading-tight">
-                    Kaproka {{ $data['nama_kepala'] }}
+                     {{ $data['nama_kepala'] }}
                 </h3>
 
                 <p class="text-xs text-gray-400 mt-1 font-mono">
@@ -73,7 +72,7 @@
                 </h2>
 
                 <p class="text-gray-500 mt-2 text-sm">
-                    Total Guru & Siswa/i
+                    Total Siswa/i
                 </p>
             </div>
 
@@ -94,8 +93,127 @@
 
         </div>
 
+        @auth
+       <!-- KAPROKA ACTION -->
+        <div x-data="{ 
+                
+                openEdit: false
+            }" 
+            class="mt-5 w-full">
+
+            <!-- BUTTON -->
+            <div class="flex gap-4 w-full">
+                <!-- Tombol EDIT -->
+                <div class="flex-1">
+                    <button type="button"
+                            @click="openEdit = !openEdit; openUpload = false"
+                            class="w-full bg-yellow-500 hover:bg-red-700 text-white py-2 rounded-xl text-sm font-medium transition">
+                        Upload / Edit Data
+                    </button>
+                </div>
+
+                <!-- Tombol HAPUS -->
+                <form action="{{ route('proka.deleteKaproka', $data['id']) }}"
+                    method="POST"
+                    onsubmit="return confirm('Yakin ingin menghapus data Kaproka?')"
+                    class="flex-1">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit"
+                            class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-xl text-sm font-medium transition">
+                        Hapus
+                    </button>
+                </form>
+            </div>
+
+            <!-- FORM UPLOAD FOTO -->
+            <form x-show="openUpload"
+                x-transition
+                action="{{ route('proka.uploadFotoKaproka', $data['id']) }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="mt-4 bg-gray-50 p-4 rounded-2xl border border-gray-200">
+
+                @csrf
+                @method('PUT')
+
+                <div class="mb-4">
+                    <label class="block text-xs mb-1 text-gray-600">
+                        Upload Foto
+                    </label>
+
+                    <input type="file"
+                        name="foto"
+                        class="w-full border rounded-xl px-3 py-2 text-sm bg-white">
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-xl text-sm font-medium">
+
+                    Simpan Foto
+
+                </button>
+                @endauth
+
+            </form>
+
+            <!-- FORM EDIT DATA -->
+            <form x-show="openEdit"
+                x-transition
+                action="{{ route('proka.updateDataKaproka', $data['id']) }}"
+                method="POST"
+                enctype="multipart/form-data"
+                class="mt-4 bg-gray-50 p-4 rounded-2xl border border-gray-200">
+
+                @csrf
+                @method('PUT')
+
+                <!-- FOTO -->
+                <div class="mb-3">
+                    <label class="block text-xs mb-1 text-gray-600">
+                        Ganti Foto
+                    </label>
+
+                    <input type="file"
+                        name="foto"
+                        class="w-full border rounded-xl px-3 py-2 text-sm bg-white">
+                </div>
+
+                <!-- NAMA -->
+                <div class="mb-3">
+                    <label class="block text-xs mb-1 text-gray-600">
+                        Nama Kaproka
+                    </label>
+
+                    <input type="text"
+                        name="nama_kepala"
+                        value="{{ $data['nama_kepala'] ?? '' }}"
+                        class="w-full border rounded-xl px-3 py-2 text-sm">
+                </div>
+
+                <!-- NIP -->
+                <div class="mb-4">
+                    <label class="block text-xs mb-1 text-gray-600">
+                        NIP
+                    </label>
+
+                    <input type="number"
+                        name="nip"
+                        value="{{ $data['nip'] ?? '' }}"
+                        class="w-full border rounded-xl px-3 py-2 text-sm">
+                </div>
+
+                <button type="submit"
+                        class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-xl text-sm font-medium">
+
+                    Simpan Perubahan
+
+                </button>
+
+            </form>
+
         <!-- TIM PENGAJAR -->
-        <div class="mt-12">
+        <!-- <div class="mt-12">
 
             <div class="flex justify-between items-center mb-6">
 
@@ -108,14 +226,14 @@
                         Personel pengajar program keahlian.
                     </p>
                 </div>
-
+            @auth
                 <a href="{{ route('guru.create', strtolower($data['judul'])) }}"
                    class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl shadow text-sm font-medium transition">
 
                     + Tambah Guru
 
                 </a>
-
+            @endauth
             </div>
 
             <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-gray-100">
@@ -140,9 +258,11 @@
                                     Mata Pelajaran
                                 </th>
 
+                                 @auth
                                 <th class="p-5 text-sm font-semibold text-gray-600 text-center">
                                     Aksi
                                 </th>
+                                 @endauth
 
                             </tr>
 
@@ -166,9 +286,11 @@
                                     {{ $guru->mapel }}
                                 </td>
 
+                                @auth
                                 <td class="p-5 text-sm text-center whitespace-nowrap">
+                                    -->
 
-                                    <!-- EDIT -->
+                                <!-- EDIT -->
                                     <button type="button"
                                             @click="openEditGuru({{ json_encode($guru) }})"
                                             class="text-indigo-600 hover:text-indigo-900 mr-3 font-medium text-sm">
@@ -185,9 +307,9 @@
                                         Hapus
 
                                     </button>
-
+                                
                                 </td>
-
+                            @endauth
                             </tr>
 
                             @endforeach
@@ -201,7 +323,6 @@
             </div>
 
         </div>
-
         <!-- DATA SISWA -->
         <div class="mt-16">
 
@@ -218,14 +339,15 @@
                     </p>
 
                 </div>
-
+            
+            @auth
                 <a href="{{ route('siswa.create', strtolower($data['judul'])) }}"
                    class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow text-sm font-medium transition">
 
                     + Tambah Siswa
 
                 </a>
-
+            @endauth
             </div>
 
             <div class="bg-white rounded-3xl shadow-sm overflow-hidden border border-gray-100">
@@ -253,10 +375,12 @@
                                 <th class="p-5 text-sm font-semibold text-gray-600">
                                     Status
                                 </th>
-
+                                
+                                 @auth
                                 <th class="p-5 text-sm font-semibold text-gray-600 text-center">
                                     Aksi
                                 </th>
+                                 @endauth
 
                             </tr>
 
@@ -288,16 +412,16 @@
 
                                 </td>
 
-                                <td class="p-5 text-sm text-center whitespace-nowrap">
+                                @auth
+                                <td class="p-5 text-sm text-center whitespace-nowrap">    
+                                
+                                <!-- EDIT -->
+                                    <a href="{{ route('siswa.edit', $siswa->id) }}"
+                                        class="text-indigo-600 hover:text-indigo-900 mr-3 font-medium text-sm">
 
-                                    <!-- EDIT -->
-                                    <button type="button"
-                                            @click="openEditSiswa({{ json_encode($siswa) }})"
-                                            class="text-indigo-600 hover:text-indigo-900 mr-3 font-medium text-sm">
+                                            Edit
 
-                                        Edit
-
-                                    </button>
+                                        </a>
 
                                     <!-- HAPUS -->
                                     <button type="button"
@@ -307,7 +431,7 @@
                                         Hapus
 
                                     </button>
-
+                                 @endauth
                                 </td>
 
                             </tr>
@@ -407,6 +531,97 @@
 
     </div>
 
+
+    <!-- MODAL EDIT SISWA -->
+    <div x-show="modalEditSiswa"
+        x-cloak
+        class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+
+        <div class="bg-white p-8 rounded-3xl max-w-lg w-full">
+
+            <h2 class="text-2xl font-bold mb-6">
+                Edit Siswa
+            </h2>
+
+            <form x-bind:action="'/siswa/' + formSiswa.id + '/update'"
+                method="POST">
+
+                    @csrf
+                    @method('PUT')
+
+                <div class="mb-4">
+
+                    <label class="block mb-2 text-sm">
+                        Nama Siswa
+                    </label>
+
+                    <input type="text"
+                        name="nama_lengkap"
+                        x-model="formSiswa.nama"
+                        class="w-full border rounded-xl px-4 py-3">
+                </div>
+
+                <div class="mb-4">
+
+                    <label class="block mb-2 text-sm">
+                        NISN
+                    </label>
+
+                    <input type="text"
+                        name="nip"
+                        x-model="formSiswa.nip"
+                        class="w-full border rounded-xl px-4 py-3">
+                </div>
+
+                <div class="mb-4">
+
+                    <label class="block mb-2 text-sm">
+                        Kelas
+                    </label>
+
+                    <input type="text"
+                        name="kelas"
+                        x-model="formSiswa.kelas"
+                        class="w-full border rounded-xl px-4 py-3">
+                </div>
+
+                <div class="mb-6">
+
+                    <label class="block mb-2 text-sm">
+                        Status
+                    </label>
+
+                    <input type="text"
+                        name="status"
+                        x-model="formSiswa.status"
+                        class="w-full border rounded-xl px-4 py-3">
+                </div>
+
+                <div class="flex gap-4">
+
+                    <button type="submit"
+                            class="bg-green-600 text-white px-5 py-3 rounded-xl w-full">
+
+                        Simpan
+
+                    </button>
+
+                    <button type="button"
+                            @click="modalEditSiswa = false"
+                            class="bg-gray-200 px-5 py-3 rounded-xl w-full">
+
+                        Batal
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
     <!-- MODAL DELETE -->
     <div x-show="modalDelete"
          x-cloak
@@ -464,17 +679,26 @@ function prokaApp() {
 
     return {
 
-        modalEditGuru: false,
-        modalDelete: false,
+    modalEditGuru: false,
+    modalEditSiswa: false,
+    modalDelete: false,
 
-        deleteActionUrl: '',
+    deleteActionUrl: '',
 
-        formGuru: {
-            id: '',
-            nama: '',
-            nip: '',
-            mapel: ''
-        },
+    formGuru: {
+        id: '',
+        nama: '',
+        nip: '',
+        mapel: ''
+    },
+
+    formSiswa: {
+        id: '',
+        nama: '',
+        nip: '',
+        kelas: '',
+        status: ''
+    },
 
         openEditGuru(guru) {
 
@@ -487,9 +711,13 @@ function prokaApp() {
         },
 
         openEditSiswa(siswa) {
+            this.formSiswa.id = siswa.id;
+            this.formSiswa.nama = siswa.nama_lengkap;
+            this.formSiswa.nip = siswa.nip;
+            this.formSiswa.kelas = siswa.kelas;
+            this.formSiswa.status = siswa.status;
 
-            alert('Modal edit siswa bisa ditambahkan berikutnya');
-
+            this.modalEditSiswa = true;
         },
 
         openDeleteModal(type, id) {

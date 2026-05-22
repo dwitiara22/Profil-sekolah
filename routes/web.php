@@ -81,13 +81,24 @@ Route::middleware(['auth'])->prefix('timja')->name('timja.')->group(function () 
 // 3. Proka
 // ==================== HALAMAN PROKA UTAMA ====================
 Route::get('/proka/{slug}', [KepalaProkaController::class, 'index'])->name('proka');
+Route::put('/proka/{id}/kaproka', [KepalaProkaController::class, 'updateKaproka'])
+    ->name('proka.updateKaproka');
+Route::delete('/proka/{id}/kaproka', [KepalaProkaController::class, 'deleteKaproka'])
+    ->name('proka.deleteKaproka');
+Route::put('/proka/{id}/upload-foto', [KepalaProkaController::class, 'uploadFotoKaproka'])
+    ->name('proka.uploadFotoKaproka');
 
+Route::put('/proka/{id}/update-data', [KepalaProkaController::class, 'updateDataKaproka'])
+    ->name('proka.updateDataKaproka');
+
+Route::delete('/proka/{id}/kaproka', [KepalaProkaController::class, 'deleteKaproka'])
+    ->name('proka.deleteKaproka');
 
 // ==================== AKSI TOMBOL GURU ====================
 Route::get('/guru/tambah/{proka}', [KepalaProkaController::class, 'createGuru'])->name('guru.create');
 Route::post('/guru/simpan', [KepalaProkaController::class, 'storeGuru'])->name('guru.store');
 Route::get('/guru/{id}/edit', [KepalaProkaController::class, 'editGuru'])->name('guru.edit');
-Route::put('/guru/{id}/update', [KepalaProkaController::class, 'updateGuru'])->name('guru.update');
+Route::put('/guru/{id}', [KepalaProkaController::class, 'updateGuru'])->name('guru.update');
 Route::delete('/guru/{id}', [KepalaProkaController::class, 'destroyGuru'])->name('guru.destroy');
 
 

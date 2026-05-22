@@ -20,8 +20,8 @@
             @if($mode == 'edit') @method('PUT') @endif
             
             <!-- Hidden input untuk melempar kode proka -->
-            <input type="hidden" name="proka" value="{{ $proka }}">
-
+            <input type="hidden" name="proka" value="{{ strtolower($proka) }}">
+            
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-600 mb-2">Nama Lengkap Siswa/i</label>
                 <input type="text" name="nama" value="{{ $siswa->nama_lengkap ?? '' }}" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-500 text-gray-700">
@@ -41,7 +41,11 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-600 mb-2">Kelas</label>
-                <input type="text" name="kelas" value="{{ $siswa->kelas_atau_mapel ?? '' }}" placeholder="Contoh: XII {{ $proka }} 1" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-500 text-gray-700">
+                <input type="text" 
+                name="kelas" 
+                value="{{ $siswa->kelas_atau_mapel ?? '' }}" 
+                placeholder="Contoh: XII {{ $proka }} 1" 
+                required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:border-indigo-500 text-gray-700">
             </div>
             
             <div class="mb-6">
